@@ -56,7 +56,7 @@ module.exports = function(folder, item){
       socialtext = normalize.text(item.safeGet('socialtext')),
       city = item.safeGet('location').replace('Menneskene ', ''),
       filepath = path.join(folder, city.toLowerCase()),
-      filename = normalize.url(path.join(filepath, getUniqueName(city, firstname, lastname) + '.html.md'));
+      filename = normalize.url(path.join(filepath, getUniqueName(city, firstname, lastname))) + '.html.md';
 
   content = '---\n';
   content += 'firstname: "' + firstname + '"\n';

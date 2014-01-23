@@ -220,7 +220,7 @@ function mapping(c) {
 
 module.exports = {
   url: function (str) {
-   return str.replace(nonWord, mapping);
+   return str.replace(nonWord, mapping).replace(/\.+/g, '-');
   },
   text: function(text){
     return text.replace(/(\n\s*)+/gm, '\n\n');
