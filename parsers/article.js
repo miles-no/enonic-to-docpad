@@ -5,13 +5,13 @@ var fs = require('fs'),
 
 module.exports = function(folder, item){
   var content,
-      title = item.title,
+      title = normalize.frontmatter(item.title),
       date = moment(item.pubdate).format('YYYY-MM-DD'),
       url = decodeURIComponent(item.safeGet('link')),
       urlFragments = url.split('/'),
       filename = urlFragments[urlFragments.length - 1],
       filepath = normalize.url(path.join(folder, date + '-' + filename)) + '.html.md',
-      ingress = item.safeGet('ingress'),
+      ingress = normalize.frontmatter(item.safeGet('ingress')),
       author = item.safeGet('author'),
       text = normalize.text(item.safeGet('text'));
 

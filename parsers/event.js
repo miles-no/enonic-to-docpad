@@ -5,7 +5,7 @@ var fs = require('fs'),
 
 module.exports = function(folder, item){
   var content,
-      title = item.title,
+      title = normalize.frontmatter(item.title),
       city = item.safeGet('location'),
       date = moment(item.pubdate).format('YYYY-MM-DD'),
       url = decodeURIComponent(item.safeGet('link')),
@@ -14,7 +14,7 @@ module.exports = function(folder, item){
       filepath = path.join(folder, city.toLowerCase()),
       filename = normalize.url(path.join(filepath, date + '-' + filenamepart)) + '.html.md',
       author = item.safeGet('author'),
-      ingress = item.safeGet('ingress'),
+      ingress = normalize.frontmatter(item.safeGet('ingress')),
       text = normalize.text(item.safeGet('text'));
 
   content = '---\n';

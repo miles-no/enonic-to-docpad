@@ -223,6 +223,9 @@ module.exports = {
    return str.replace(nonWord, mapping).replace(/\.+/g, '-');
   },
   text: function(text){
-    return text.replace(/(\n\s*)+/gm, '\n\n');
+    return text.replace(/(\n\s*)+/gm, '\n\n').replace(/(\r\n)/gm, '\n');
+  },
+  frontmatter: function(str){
+    return str.replace(/(\r\n)+/gm, ' ').replace(/"/g, '');
   }
 };
