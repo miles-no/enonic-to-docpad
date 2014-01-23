@@ -25,7 +25,17 @@ var FeedParser = require('feedparser'),
 
 var logonly = process.argv.length > 2 && process.argv[2] === 'log';
 
+function safeGet(name){
+  var rss = this['rss:' + name];
+  if(rss && rss['#']) {
+    return rss['#'];
+  } else {
+    return '';
+  }
+}
+
 new TaskGroup ({
+  concurrency: 0,
   tasks: feeds.map(function(feed){
     return function(complete){
       if(feed.enabled === false){
@@ -50,6 +60,8 @@ new TaskGroup ({
               console.log(item);
             } else {
               try {
+                item.safeGet = safeGet.bind(item);
+
                 feed.parse(feed.path, item);
               } catch(err){
                 console.log(err);

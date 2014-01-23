@@ -218,6 +218,11 @@ function mapping(c) {
   return map[c] || c;
 }
 
-module.exports = function (str) {
-  return str.replace(nonWord, mapping);
+module.exports = {
+  url: function (str) {
+   return str.replace(nonWord, mapping);
+  },
+  text: function(text){
+    return text.replace(/(\n\s*)+/gm, '\n\n');
+  }
 };

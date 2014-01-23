@@ -7,16 +7,13 @@ module.exports = function(folder, item){
   var content,
       title = item.title,
       date = moment(item.pubdate).format('YYYY-MM-DD'),
-      url = decodeURIComponent(item['rss:link']['#']),
+      url = decodeURIComponent(item.safeGet('link')),
       urlFragments = url.split('/'),
       filename = urlFragments[urlFragments.length - 1],
-      filepath = normalize(path.join(folder, date + '-' + filename + '.html.md')),
-      ingress = item['rss:ingress']['#'],
-      author = item['rss:author']['#'],
-      text = item['rss:text']['#'];
-
-  // normalize a bit
-  text = text.replace(/(\n\s*)+/gm, '\n\n');
+      filepath = normalize.url(path.join(folder, date + '-' + filename + '.html.md')),
+      ingress = item.safeGet('ingress'),
+      author = item.safeGet('author'),
+      text = normalize.text(item.safeGet('text'));
 
   content = '---\n';
   content += 'title: "' + title + '"\n';

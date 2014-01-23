@@ -1,7 +1,8 @@
 var fs = require('fs'),
     path = require('path'),
     moment = require('moment'),
-    normalize = require('../normalize');
+    normalize = require('../normalize'),
+    existingNames = {};
 
 function fixRoles(roles) {
   if(!roles || roles.indexOf(' ') < 0) return roles;
@@ -16,19 +17,27 @@ function fixRoles(roles) {
   }, '');
 }
 
-function getRssItem(item, name){
-  var rss = item['rss:' + name];
-  if(rss) {
-    return rss['#'];
+function getUniqueName(city, firstname, lastname){
+  existingNames[city] = existingNames[city] || [];
+  firstname = firstname.toLowerCase().replace(' ', '-');
+
+  if(existingNames[city].indexOf(firstname) < 0){
+    existingNames[city].push(firstname);
+    return firstname;
   } else {
-    return '';
+    if(firstname.indexOf('-') < 0){
+      firstname += '-';
+    }
+    firstname += lastname.substr(0, 1);
+    lastname = lastname.substr(1);
+    return getUniqueName(city, firstname, lastname);
   }
 }
 
 function getSocialMeta(item){
   var content = '';
   ['twitter', 'linkedin', 'blog', 'github'].forEach(function(service){
-    var link = getRssItem(item, service);
+    var link = item.safeGet(service);
     if(link) content += '  ' + service + ': ' + link + '\n';
   });
 
@@ -36,29 +45,23 @@ function getSocialMeta(item){
 }
 
 module.exports = function(folder, item){
-  if(item['rss:quit']['#'] === 'true')
+  if(item.safeGet('quit') === 'true')
     return;
 
   var content,
-      firstname = item['rss:firstname']['#'],
-      lastname = item['rss:lastname']['#'],
-      role = fixRoles(item['rss:role']['#']),
-      text = item['rss:text']['#'],
-      socialtext = item['rss:socialtext']['#'],
-      city = item['rss:location']['#'].replace('Menneskene ', ''),
+      firstname = item.safeGet('firstname'),
+      lastname = item.safeGet('lastname'),
+      role = fixRoles(item.safeGet('role')),
+      text = normalize.text(item.safeGet('text')),
+      socialtext = normalize.text(item.safeGet('socialtext')),
+      city = item.safeGet('location').replace('Menneskene ', ''),
       filepath = path.join(folder, city.toLowerCase()),
-      filename = normalize(path.join(filepath, firstname.toLowerCase().replace(' ', '-') + '.html.md'));
-
-  // normalize a bit
-  text = text.replace(/(\n\s*)+/gm, '\n\n');
-  socialtext = socialtext.replace(/(\n\s*)+/gm, '\n\n');
+      filename = normalize.url(path.join(filepath, getUniqueName(city, firstname, lastname) + '.html.md'));
 
   content = '---\n';
   content += 'firstname: "' + firstname + '"\n';
   content += 'lastname: "' + lastname + '"\n';
   content += 'role: "' + role + '"\n';
-  // content += 'urls:\n';
-  // content += '  - '+ url.replace('http://www.miles.no', '') + '\n';
   content += 'published: true\n';
   content += getSocialMeta(item);
   content += '---\n\n';
