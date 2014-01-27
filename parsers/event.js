@@ -2,7 +2,8 @@ var fs = require('fs'),
     path = require('path'),
     moment = require('moment'),
     normalize = require('../normalize'),
-    toMarkdown = require('../toMarkdown').toMarkdown;
+    toMarkdown = require('../toMarkdown').toMarkdown,
+    downloader = require('../downloader');
 
 module.exports = function(folder, item){
   var content,
@@ -31,4 +32,5 @@ module.exports = function(folder, item){
   console.log(filename);
   if(!fs.existsSync(filepath)) fs.mkdirSync(filepath);
   fs.writeFileSync(filename, content);
+  downloader(text);
 };

@@ -2,7 +2,8 @@ var fs = require('fs'),
     path = require('path'),
     moment = require('moment'),
     normalize = require('../normalize'),
-    toMarkdown = require('../toMarkdown').toMarkdown;
+    toMarkdown = require('../toMarkdown').toMarkdown,
+    downloader = require('../downloader');
 
 module.exports = function(folder, item){
   var content,
@@ -28,4 +29,5 @@ module.exports = function(folder, item){
 
   console.log(filepath);
   fs.writeFileSync(filepath, content);
+  downloader(text);
 };
