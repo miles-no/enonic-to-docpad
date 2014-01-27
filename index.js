@@ -10,7 +10,7 @@ var FeedParser = require('feedparser'),
       url: 'http://www.miles.no/eksport/nyheter',
       path: 'out/nyheter',
       parse: require('./parsers/article'),
-      enabled: true
+      enabled: false
     },{
       url: 'http://www.miles.no/eksport/ansatte',
       path: 'out/ansatte',
@@ -20,7 +20,7 @@ var FeedParser = require('feedparser'),
       url: 'http://www.miles.no/eksport/smiles',
       path: 'out/smiles',
       parse: require('./parsers/event'),
-      enabled: true
+      enabled: false
     }];
 
 var logonly = process.argv.length > 2 && process.argv[2] === 'log';
