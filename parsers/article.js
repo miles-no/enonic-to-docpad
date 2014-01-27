@@ -1,7 +1,8 @@
 var fs = require('fs'),
     path = require('path'),
     moment = require('moment'),
-    normalize = require('../normalize');
+    normalize = require('../normalize'),
+    toMarkdown = require('../toMarkdown').toMarkdown;
 
 module.exports = function(folder, item){
   var content,
@@ -11,7 +12,7 @@ module.exports = function(folder, item){
       urlFragments = url.split('/'),
       filename = urlFragments[urlFragments.length - 1],
       filepath = normalize.url(path.join(folder, date + '-' + filename)) + '.html.md',
-      ingress = normalize.frontmatter(item.safeGet('ingress')),
+      ingress = normalize.text(item.safeGet('ingress')),
       author = item.safeGet('author'),
       text = normalize.text(item.safeGet('text'));
 
@@ -21,9 +22,9 @@ module.exports = function(folder, item){
   content += '  - '+ url.replace('http://www.miles.no', '') + '\n';
   content += 'published: true\n';
   content += 'author: "' + author + '"\n';
-  content += 'ingress: "' + ingress + '"\n';
   content += '---\n\n';
-  content += text;
+  content += toMarkdown(ingress) + '\n\n';
+  content += toMarkdown(text);
 
   console.log(filepath);
   fs.writeFileSync(filepath, content);
