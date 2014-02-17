@@ -5,6 +5,16 @@ var fs = require('fs'),
     toMarkdown = require('../toMarkdown').toMarkdown,
     downloader = require('../downloader');
 
+function getMainImage(url, imageTitle){
+    var content = '',
+        img;
+
+    if (url) {
+        content += toMarkdown('<img src="' + url + '" title="' + imageTitle + '" alt="' + imageTitle + '"/>');
+    }
+    return content;
+}
+
 module.exports = function(folder, item){
   var content,
       title = normalize.frontmatter(item.title),
@@ -17,7 +27,9 @@ module.exports = function(folder, item){
       filename = normalize.url(path.join(filepath, date + '-' + filenamepart)) + '.html.md',
       author = item.safeGet('author'),
       ingress = normalize.text(item.safeGet('ingress')),
-      text = normalize.text(item.safeGet('text'));
+      text = normalize.text(item.safeGet('text')),
+      imageUrl = item.safeGet('image').replace('http://www.miles.no/eksport/smiles/_image/', 'image://'),
+      image = getMainImage(imageUrl, normalize.text(item.safeGet('imagetitle')));
 
   content = '---\n';
   content += 'title: "' + title + '"\n';
@@ -27,10 +39,14 @@ module.exports = function(folder, item){
   content += 'author: "' + author + '"\n';
   content += '---\n\n';
   content += toMarkdown(ingress) + '\n\n';
+  if (image) {
+    content += image + '\n';
+  }
   content += toMarkdown(text);
 
   console.log(filename);
   if(!fs.existsSync(filepath)) fs.mkdirSync(filepath);
   fs.writeFileSync(filename, content);
   downloader(text);
+  downloader(imageUrl);
 };
