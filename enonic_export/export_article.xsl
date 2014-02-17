@@ -29,6 +29,9 @@
             <xsl:element name="location">
                 <xsl:value-of select="contentdata/kontor"/>
             </xsl:element>
+            <xsl:if test="contentdata/images">
+                <xsl:apply-templates select="contentdata/images"/>
+            </xsl:if>
         </xsl:element>
     </xsl:template>
 
@@ -53,4 +56,15 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+
+    <!-- Handle ingress image. The rest of the images are included in the article text -->
+    <xsl:template match="contentdata/images">
+        <xsl:element name="image">
+            <xsl:value-of select="portal:createImageUrl(image[1]/@key)"/>
+        </xsl:element>
+        <xsl:element name="imagetitle">
+            <xsl:value-of select="image[1]/text"/>
+        </xsl:element>
+    </xsl:template>
+
 </xsl:stylesheet>
