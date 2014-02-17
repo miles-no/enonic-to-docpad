@@ -23,6 +23,7 @@ module.exports = function(folder, item){
   content += 'urls:\n';
   content += '  - '+ url.replace('http://www.miles.no', '') + '\n';
   content += 'published: true\n';
+  content += 'category: \"press\"\n';
   content += '---\n\n';
   content += toMarkdown(ingress) + '\n\n';
   content += toMarkdown(text);
