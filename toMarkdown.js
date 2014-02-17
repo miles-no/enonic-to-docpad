@@ -8,7 +8,8 @@
  * Licenced under the MIT licence
  *
  */
-var path = require('path');
+var path = require('path'),
+    image_util = require('./modules/image-util');
 
 var toMarkdown = function(string) {
 
@@ -75,12 +76,13 @@ var toMarkdown = function(string) {
       replacement: function(str, attrs, innerHTML) {
         var src = attrs.match(attrRegExp('src'))[1],
             alt = attrs.match(attrRegExp('alt')),
-            title = attrs.match(attrRegExp('title'));
+            title = attrs.match(attrRegExp('title')),
+            match;
 
-        if(src.indexOf('image://') >= 0){
-          src = '/media/' + src.match(/image:\/\/(.*)\?/)[1] + '.jpg';
+        if(src.indexOf('image://') >= 0) {
+          match = src.match(/image:\/\/(.*)\?.*/);
+          src = "/media/" + image_util.getImageName(match[0]);
         }
-
         return '![' + (alt && alt[1] ? alt[1] : '') + ']' + '(' + src.toLowerCase() + (title && title[1] ? ' "' + title[1] + '"' : '') + ')';
       }
     }

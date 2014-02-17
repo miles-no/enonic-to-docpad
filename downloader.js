@@ -4,17 +4,18 @@ var http = require('http-get'),
     path = require('path'),
     rimraf = require('rimraf'),
     TaskGroup = require('taskgroup').TaskGroup,
-    out = 'out/media';
+    out = 'out/media',
+    image_util = require('./modules/image-util');
 
 
 function findImages(str){
   var match,
     urls = [],
-    imageRegex = /image:\/\/(.*)\?/g,
+    imageRegex = /image:\/\/(.*)\?.*/g,
     attRegex = /.*_attachment\/(\d*).*/g;
 
   while (match = imageRegex.exec(str)) {
-    urls.push('http://miles.no/_image/' + match[1] + '.jpg');
+    urls.push('http://miles.no/_image/' + image_util.getImageName(match[0]));
   }
   while (match = attRegex.exec(str)) {
     urls.push('http://miles.no/_attachment/' + match[1] + '.pdf');
